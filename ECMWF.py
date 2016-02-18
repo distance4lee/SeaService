@@ -15,10 +15,20 @@ def readECMWF(hours,year,month,day,prehour):
     fn_fullpath = os.popen('ls %s' % os.path.join(ECMWF_FULLPATH, fn)).read()
     fn_fullpath = fn_fullpath.replace('\n','')
     grbs = pygrib.open(fn_fullpath)
-    grb_r = grbs.select(parameterName='Total precipitation')[0]
-    r = grb_r.values*1000.0
+    # precipitation
+    grb_r = grbs.select(nameECMF='Total precipitation')[0]
+    r = grb_r.values*1000.0 # mm
     r[r<0] = 0
     lats,lons = grb_r.latlons()
+    # snowfall
+    grb_s = grbs.select(nameECMF='Snowfall')[0]
+    s = grb_s.values*1000.0 # mm
+    s[s<0] = 0
+    # temperature
+    grb_t = grbs.select(nameECMF='2 metre temperature')[0]
+    t = grb_t.values - 273.15 # degree C
+    # 
+
     return thedate,lats,lons,r
 
 
