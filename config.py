@@ -56,5 +56,5 @@ ELE_SFC_nameECMF = {
     'FAL':'Forecast albedo',
 }
 
-Nlon,Xlon,Nlat,Xlat = 100,140,0,50
+Nlon,Xlon,Nlat,Xlat = 105,130,2,41
 

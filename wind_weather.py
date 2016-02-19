@@ -4,18 +4,17 @@ from config import *
 
 
 WIND_DIRECT = {
-	'N':[337.5,22.5],
 	'NE':[22.5,67.5],
 	'E':[67.5,112.5],
 	'SE':[112.5,157.5],
 	'S':[157.5,202.5],
 	'SW':[202.5,247.5],
 	'W':[247.5,292.5],
-	'NW':[292.5,223.7]
+	'NW':[292.5,337.5],
+	'N':[337.5,22.5]
 }
 
 WIND_DIRECT_CODE = {
-	0:"C",
 	1:"NE",
 	2:"E",
 	3:"SE",
@@ -25,17 +24,18 @@ WIND_DIRECT_CODE = {
 	7:"NW",
 	8:"N",
 	9:"Whirl",
+	0:"C",
 	-1:"Unknown"
 }
 
 WEATHER_TYPE_CODE = {
-	99:'Unknown',
 	0:'Sunny',
 	1:'Cloudy',
 	2:'Overcast',
 	18:'Foggy',
 	903:'Rain',
 	913:'Snow'
+	99:'Unknown',
 }
 
 
