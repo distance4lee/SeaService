@@ -6,6 +6,14 @@ from config import *
 # fn = 'W_NAFP_C_ECMF_20160117175539_P_C1D01171200011712011.bin'
 
 def readECMWF_inbox(hours,year,month,day,prehour):
+    '''
+        INPUTS:
+            hours = "3","6","9","12","18","24","36","72",...
+            year,month,day
+            prehour = "00" or "12"
+        OUTPUTS:
+            output in a dict
+    '''
     thetime = datetime(year,month,day,int(prehour))
     thetime_pre = thetime + timedelta(hours=int(hours))
     fn = 'W_NAFP_C_ECMF_*_P_C1D%s00%s001.bin' % (
@@ -64,4 +72,12 @@ if __name__ == '__main__':
     # 00h to 24h
     hours,year,month,day,prehour = '24',2016,2,18,'00'
     output = readECMWF_inbox(hours,year,month,day,prehour)
-    print output
+    import pickle
+    lats_lons = {'lats':output['lats'], 'lons':output['lons']}
+    pkl = open('lats_lons.pkl','wb')
+    pickle.dump(lats_lons, pkl)
+    pkl.close()
+    '''
+    lats_lons = pickle.load(open('lats_lons.pkl','rb'))
+    lats,lons = [lats_lons.get(i) for i in ('lats','lons')]
+    '''
