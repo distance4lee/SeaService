@@ -5,12 +5,12 @@ from config import *
 
 # fn = 'W_NAFP_C_ECMF_20160117175539_P_C1D01171200011712011.bin'
 
-def readECMWF(hours,year,month,day,prehour):
-    thedate = datetime(year,month,day,int(prehour))
-    thedate_pre = thedate + timedelta(hours=int(hours))
+def readECMWF_inbox(hours,year,month,day,prehour):
+    thetime = datetime(year,month,day,int(prehour))
+    thetime_pre = thetime + timedelta(hours=int(hours))
     fn = 'W_NAFP_C_ECMF_*_P_C1D%s00%s001.bin' % (
-        thedate.strftime('%m%d%H'),
-        thedate_pre.strftime('%m%d%H'),
+        thetime.strftime('%m%d%H'),
+        thetime_pre.strftime('%m%d%H'),
     )
     fn_fullpath = os.popen('ls %s' % os.path.join(ECMWF_FULLPATH, fn)).read()
     fn_fullpath = fn_fullpath.replace('\n','')
@@ -19,7 +19,10 @@ def readECMWF(hours,year,month,day,prehour):
     grb_r = grbs.select(nameECMF='Total precipitation')[0]
     r = grb_r.values*1000.0 # mm
     r[r<0] = 0
+    # lats.ravel(), lons.ravel(), points_in_box is the index of points in lats.ravel() or lons.ravel()
     lats,lons = grb_r.latlons()
+    lats,lons = [i.ravel() for i in [lats,lons]]
+    points_in_box = [i for i in range(len(lats)) if Nlat<=lats[i]<=Xlat and Nlon<=lons[i]<=Xlon]
     # snowfall
     grb_s = grbs.select(nameECMF='Snowfall')[0]
     s = grb_s.values*1000.0 # mm
@@ -27,12 +30,38 @@ def readECMWF(hours,year,month,day,prehour):
     # temperature
     grb_t = grbs.select(nameECMF='2 metre temperature')[0]
     t = grb_t.values - 273.15 # degree C
-    # 
-
-    return thedate,lats,lons,r
+    # pressure
+    grb_p = grbs.select(nameECMF='Mean sea level pressure')[0]
+    p = grb_p.values/100.0 # hPa
+    # cloud
+    grb_c = grbs.select(nameECMF='Total cloud cover')[0]
+    c = grb_c.values
+    # wind
+    grb_u = grbs.select(nameECMF='10 metre U wind component')[0]
+    grb_v = grbs.select(nameECMF='10 metre V wind component')[0]
+    u,v = grb_u.values,grb_v.values
+    # take data for points in the box, maintain 1 decimal
+    r,s,t,p,c,u,v = [i.ravel() for i in [r,s,t,p,c,u,v]]
+    lats,lons,r,s,t,p,c,u,v = [
+        [round(i[points_in_box[j]],1) for j in range(len(points_in_box))] for i in [lats,lons,r,s,t,p,c,u,v]
+    ]
+    output = {
+        'thetime':thetime, # forecast time UTC
+        'thetime_pre':thetime_pre, # forecasted time UTC
+        'lats':lats, # list of lats in box, same as below
+        'lons':lons,
+        'rainfall':r,
+        'snowfall':s,
+        'temperature':t,
+        'pressure':p,
+        'uwind':u,
+        'vwind':v
+    }
+    return output
 
 
 if __name__ == '__main__':
     # 00h to 24h
-    hours,year,month,day,prehour = '24',2016,2,16,'00'
-    thedate,lats,lons,r = readECMWF(hours,year,month,day,prehour)
+    hours,year,month,day,prehour = '24',2016,2,18,'00'
+    output = readECMWF_inbox(hours,year,month,day,prehour)
+    print output

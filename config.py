@@ -11,8 +11,13 @@
 '''
 
 import os
-from datetime import datetime,date,timedelta
+import numpy as np
 import pygrib
+from collections import OrderedDict
+from datetime import datetime,date,timedelta
+
+from ispointinpoly import point_in_poly
+from sea_dicts import *
 
 
 CMACAST_DIR = '/mnt/cmacast'
@@ -37,7 +42,7 @@ ELE_SFC_nameECMF = {
     '10U':'10 metre U wind component',
     '10V':'10 metre V wind component',
     # precipitation
-    'TP':'Total precipitation'
+    'TP':'Total precipitation',
     'TCW':'Total column water',
     'TCWV':'Total column water vapour',
     'LSP':'Large-scale precipitation', # Stratiform precipitation
@@ -51,4 +56,5 @@ ELE_SFC_nameECMF = {
     'FAL':'Forecast albedo',
 }
 
-LON_LMT,LAT_LMT = [100,140],[0,50]
+Nlon,Xlon,Nlat,Xlat = 100,140,0,50
+
