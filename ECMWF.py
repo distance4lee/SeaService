@@ -50,8 +50,11 @@ def readECMWF_inbox(hours,year,month,day,prehour):
     u,v = grb_u.values,grb_v.values
     # take data for points in the box, maintain 1 decimal
     r,s,t,p,c,u,v = [i.ravel() for i in [r,s,t,p,c,u,v]]
-    lats,lons,r,s,t,p,c,u,v = [
-        [round(i[points_in_box[j]],1) for j in range(len(points_in_box))] for i in [lats,lons,r,s,t,p,c,u,v]
+    lats,lons = [
+        [round(i[points_in_box[j]],3) for j in range(len(points_in_box))] for i in [lats,lons]
+    ]
+    r,s,t,p,c,u,v = [
+        [round(i[points_in_box[j]],1) for j in range(len(points_in_box))] for i in [r,s,t,p,c,u,v]
     ]
     output = {
         'thetime':thetime, # forecast time UTC
@@ -78,6 +81,13 @@ if __name__ == '__main__':
     pickle.dump(lats_lons, pkl)
     pkl.close()
     '''
+    import pickle
     lats_lons = pickle.load(open('lats_lons.pkl','rb'))
     lats,lons = [lats_lons.get(i) for i in ('lats','lons')]
+    points = np.vstack([lons,lats]).T
+
+    grid_x,grid_y = np.mgrid[Nlon:Xlon+grid_delta:grid_delta,Nlat:Xlat+grid_delta:grid_delta]
+    points2 = np.vstack([grid_x.T.ravel(),grid_y.T.ravel()[::-1]]).T
+
+    points2 == points
     '''

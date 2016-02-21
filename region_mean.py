@@ -56,7 +56,6 @@ if __name__ == '__main__':
     output = readECMWF_inbox(hours,year,month,day,prehour)
     lats,lons,var = [output.get(i) for i in ['lats','lons','temperature']]
     points = make_points_from_latslons(lats,lons)
-    print type(points),len(points)
     regions = offshore_polys
     points_in_region_TrueFalseS = points_in_regions(points,regions)
     var_means = region_means(var,points_in_region_TrueFalseS)

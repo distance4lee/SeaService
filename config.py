@@ -31,8 +31,6 @@ ELE_SFC_nameECMF = {
     '2D':'2 metre dewpoint temperature',
     'SKT':'Skin temperature',
     'SSTK':'Sea surface temperature',
-    'MN2T6':'Minimum temperature at 2 metres since last 6 hours',
-    'MX2T6':'Maximum temperature at 2 metres since last 6 hours',
     # cloud
     'TCC':'Total cloud cover',
     'LCC':'Low cloud cover',
@@ -57,4 +55,4 @@ ELE_SFC_nameECMF = {
 }
 
 Nlon,Xlon,Nlat,Xlat = 105,130,2,41
-
+grid_delta = 0.125
