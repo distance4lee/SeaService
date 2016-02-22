@@ -79,7 +79,7 @@ if __name__ == '__main__':
 	fn_fullpath = DATADIR + fn
 	print fn_fullpath
 
-	GridC2F = GridCoarse2Fine( 70, 140, 15, 55, 0.125 )
+	GridC2F = GridCoarse2Fine( 106, 128, 2, 42, 0.125 )
 
 	for fh in range(3,75,3):
 		fname = OUTDIR + dtInit.strftime('%Y%m%d%H') + '/' + GetOutFname( 'visibility', dtInit, fh )
