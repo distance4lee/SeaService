@@ -34,7 +34,7 @@ WEATHER_TYPE_CODE = {
 	2:'Overcast',
 	18:'Foggy',
 	903:'Rain',
-	913:'Snow'
+	913:'Snow',
 	99:'Unknown',
 }
 
@@ -71,9 +71,9 @@ def uv2wswd(u,v):
 		ws = round(np.sqrt(u*u + v*v),1)
 		if ws:
 			if v > 0:
-				wd = round(np.asin(u/ws)/np.pi*180, 1)
+				wd = round(np.arcsin(u/ws)/np.pi*180, 1)
 			else:
-				wd = round(180-np.asin(u/ws)/np.pi*180, 1)
+				wd = round(180-np.arcsin(u/ws)/np.pi*180, 1)
 			if wd < 0:
 				wd += 360
 			if wd > 360:
@@ -91,7 +91,7 @@ def weather_type(rainfall, snowfall, cloud, visiability):
 		INPUTS:
 			raingfall and snowfall units in mm
 			cloud means cloud fraction
-			visibility units in km
+			visibility units in m
 		OUTPUTS:
 			wt in priority of Snow,Rain,Frog,Sunny/Cloudy/Overcast, in int code
 	'''
@@ -108,9 +108,12 @@ def weather_type(rainfall, snowfall, cloud, visiability):
 				wt = 1    # Cloudy
 			else:
 				wt = 2    # Overcast
-			if visiability<1:
+			if visiability<1000:
 				wt = 18   # Foggy
 	except:
 		wt = 99           # Unknown
 	return wt
 
+
+if __name__ == '__main__':
+	print uv2wswd(-1,-1)
