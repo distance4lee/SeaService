@@ -45,7 +45,7 @@ ELE_SFC_nameECMF = {
     'TP':'Total precipitation',
     'TCW':'Total column water',
     'TCWV':'Total column water vapour',
-    'LSP':'Large-scale precipitation', # Stratiform precipitation
+    'LSP':'Large-scale precipitation',
     'CP':'Convective precipitation',
     'CAPE':'Convective available potential energy',
     # snow
@@ -56,12 +56,21 @@ ELE_SFC_nameECMF = {
     'FAL':'Forecast albedo',
 }
 
+ELE_WAVE_nameGFS = {
+    'HTSGW': 'Significant height of combined wind waves and swell',
+    'PERPW': 'Primary wave mean period',
+    'WVHGT': 'Significant height of wind waves',
+    'WVPER': 'Mean period of wind waves',
+    'SWELL': 'Significant height of swell waves',
+    'SWPER': 'Mean period of swell waves'
+}
+
 Nlon,Xlon,Nlat,Xlat = 105,130,2,41
 grid_delta = 0.125
 
 
 VIS_DIR = '/home/enso/noaa/visibility'
-
+WAVE_DIR = '/home/enso/noaa/wave'
 
 try:
     lats_lons = pickle.load(open('lats_lons.pkl','rb'))
