@@ -2,8 +2,8 @@
 
 from config import *
 
-
 # fn = 'W_NAFP_C_ECMF_20160117175539_P_C1D01171200011712011.bin'
+
 
 def readECMWF_inbox(hours,year,month,day,prehour):
     '''
@@ -20,7 +20,7 @@ def readECMWF_inbox(hours,year,month,day,prehour):
         thetime.strftime('%m%d%H'),
         thetime_pre.strftime('%m%d%H'),
     )
-    fn_fullpath = os.popen('ls %s' % os.path.join(ECMWF_FULLPATH, fn)).read()
+    fn_fullpath = os.popen('ls %s' % os.path.join(ECMWF_FULLPATH, fn)).read() # ECMWF_FULLPATH
     fn_fullpath = fn_fullpath.replace('\n','')
     grbs = pygrib.open(fn_fullpath)
     # precipitation
@@ -30,7 +30,7 @@ def readECMWF_inbox(hours,year,month,day,prehour):
     # lats.ravel(), lons.ravel(), points_in_box is the index of points in lats.ravel() or lons.ravel()
     lats,lons = grb_r.latlons()
     lats,lons = [i.ravel() for i in [lats,lons]]
-    points_in_box = [i for i in range(len(lats)) if Nlat<=lats[i]<=Xlat and Nlon<=lons[i]<=Xlon]
+    points_in_box = [i for i in range(len(lats)) if Nlat<=lats[i]<=Xlat and Nlon<=lons[i]<=Xlon] # Nlon,Xlon,Nlat,Xlat
     # snowfall
     grb_s = grbs.select(nameECMF='Snowfall')[0]
     s = grb_s.values*1000.0 # mm
@@ -66,27 +66,28 @@ def readECMWF_inbox(hours,year,month,day,prehour):
         'temperature':t,
         'pressure':p,
         'uwind':u,
-        'vwind':v
+        'vwind':v,
+        'cloud':c,
     }
     return output
 
 
 if __name__ == '__main__':
-    # 00h to 24h
     hours,year,month,day,prehour = '24',2016,2,18,'00'
     output = readECMWF_inbox(hours,year,month,day,prehour)
-    import pickle
+    # write 'lats_lons.pkl' and 'points.txt'
     lats_lons = {'lats':output['lats'], 'lons':output['lons']}
     pkl = open('lats_lons.pkl','wb')
     pickle.dump(lats_lons, pkl)
     pkl.close()
+    points = np.vstack([lons,lats]).T
+    np.savetxt('points.txt',points,fmt='%1.3f')
     '''
     import pickle
     lats_lons = pickle.load(open('lats_lons.pkl','rb'))
     lats,lons = [lats_lons.get(i) for i in ('lats','lons')]
-    points = np.vstack([lons,lats]).T
 
-    grid_x,grid_y = np.mgrid[Nlon:Xlon+grid_delta:grid_delta,Nlat:Xlat+grid_delta:grid_delta]
+    grid_x,grid_y = np.mgrid[Nlon:Xlon+grid_delta:grid_delta,Nlat:Xlat+grid_delta:grid_delta] # grid_delta
     points2 = np.vstack([grid_x.T.ravel(),grid_y.T.ravel()[::-1]]).T
 
     points2 == points

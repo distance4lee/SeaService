@@ -11,10 +11,12 @@
 '''
 
 import os
+import pickle
 import numpy as np
 import pygrib
 from collections import OrderedDict
 from datetime import datetime,date,timedelta
+from scipy.interpolate import griddata
 
 from ispointinpoly import point_in_poly
 from sea_dicts import *
@@ -56,3 +58,19 @@ ELE_SFC_nameECMF = {
 
 Nlon,Xlon,Nlat,Xlat = 105,130,2,41
 grid_delta = 0.125
+
+
+VIS_DIR = '/home/enso/noaa/visibility'
+
+
+try:
+    lats_lons = pickle.load(open('lats_lons.pkl','rb'))
+    LATS,LONS = [lats_lons.get(i) for i in ('lats','lons')]
+    POINTS = [[LONS[i],LATS[i]] for i in range(len(LATS))]
+    # POINTS = np.loadtxt('points.txt')
+    points_in_region_TrueFalseS = pickle.load(open('points_in_region_TrueFalseS.pkl','rb'))
+except:
+    print('!!! No pkl found !!!')
+
+
+OUTPUT_DIR = '/home/enso/SeaService_output'

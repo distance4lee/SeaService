@@ -1,2 +1,3 @@
-ECMWF.grib_dump.*
+*.grib_dump.txt
 *.pyc
+*.pkl

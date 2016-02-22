@@ -3,11 +3,11 @@
 from config import *
 
 
-def make_points_from_latslons(lats,lons):
+def make_points_from_latslons(lons,lats):
     '''
         lats,lons in list with the same length
     '''
-    points = [(lons[i],lats[i]) for i in range(len(lats))]
+    points = [[lons[i],lats[i]] for i in range(len(lats))]
     return points
 
 
@@ -17,7 +17,7 @@ def points_in_region(points,region):
         points is a list in format [(x0,y0),(x1,y1),...,(xn,yn)]
         region is a list in format [[1,1],[1,4],[3,7],[4,4],[4,1]]
     '''
-    points_in_region_TrueFalse = [point_in_poly(point,region) for point in points]
+    points_in_region_TrueFalse = [int(point_in_poly(point,region)) for point in points] # 1:True,0:False
     return points_in_region_TrueFalse
 
 
@@ -52,12 +52,24 @@ def region_means(var,points_in_region_TrueFalseS):
 
 if __name__ == '__main__':
     from ECMWF import *
-    hours,year,month,day,prehour = '24',2016,2,18,'00'
+    hours,year,month,day,prehour = '24',2016,2,20,'00'
     output = readECMWF_inbox(hours,year,month,day,prehour)
+    #'''
     lats,lons,var = [output.get(i) for i in ['lats','lons','temperature']]
-    points = make_points_from_latslons(lats,lons)
-    regions = offshore_polys
-    points_in_region_TrueFalseS = points_in_regions(points,regions)
-    var_means = region_means(var,points_in_region_TrueFalseS)
-    print var_means
-
+    points = make_points_from_latslons(lons,lats)
+    points_in_region_TrueFalseS = {
+        'offshore':points_in_regions(points,offshore_polys),
+        'coastal':points_in_regions(points,coastal_polys)
+    }
+    pkl = open('points_in_region_TrueFalseS.pkl','wb')
+    pickle.dump(points_in_region_TrueFalseS, pkl)
+    pkl.close()
+    for regions in ['offshore','coastal']:
+        print region_means(var,points_in_region_TrueFalseS.get(regions)) # points_in_region_TrueFalseS
+    #'''
+    # for short as below
+    '''
+    var = output.get('temperature')
+    for regions in ['offshore','coastal']:
+        print region_means(var,points_in_region_TrueFalseS.get(regions)) # points_in_region_TrueFalseS
+    #'''
