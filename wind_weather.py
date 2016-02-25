@@ -71,9 +71,9 @@ def uv2wswd(u,v):
 		ws = round(np.sqrt(u*u + v*v),1)
 		if ws:
 			if v > 0:
-				wd = round(np.arcsin(u/ws)/np.pi*180, 1)
+				wd = round(( 180 + np.arcsin(u/ws)/np.pi*180 ), 1)
 			else:
-				wd = round(180-np.arcsin(u/ws)/np.pi*180, 1)
+				wd = round(( 360 - np.arcsin(u/ws)/np.pi*180 ), 1)
 			if wd < 0:
 				wd += 360
 			if wd > 360:
