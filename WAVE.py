@@ -8,12 +8,13 @@
 
 from config import *
 
+
 def readWAVE_inbox(hours,year,month,day,prehour):
     '''
         INPUTS:
             hours = "3","6","9","12","18","24","36","72",...,"168"
             year,month,day
-            prehour = "00","12"
+            prehour = "00","06","12","18"
         OUTPUTS:
             HTSGW: Significant height of combined wind waves and swell(有效波高), units: meter
             PERPW: Primary wave mean period(平均周期), units: second
@@ -24,7 +25,8 @@ def readWAVE_inbox(hours,year,month,day,prehour):
 
             All elements packed in dict
     '''
-    varlist = ['HTSGW','PERPW','WVHGT','WVPER','SWELL','SWPER']
+    # varlist = ['HTSGW','PERPW','WVHGT','WVPER','SWELL','SWPER']
+    varlist = ['HTSGW',]
 
     output={}
 
@@ -41,14 +43,21 @@ def readWAVE_inbox(hours,year,month,day,prehour):
         v = grb_v.values
         lats,lons = grb_v.latlons()
         v,lats,lons = [i.ravel() for i in [v,lats,lons]]
+        # mind that 9999.0 as missing values
+        v = [i if i<9990 else 0 for i in v]
         v = griddata(np.vstack((lons,lats)).T, v, (LONS,LATS), method='linear') # (LATS,LONS)
-
+        v = [round(i,1) for i in v] # keep 1 decimal
+        v = [i if i else 9999 for i in v]
         output.update({var:v})
 
     return output
 
 
 if __name__ == '__main__':
-    hours,year,month,day,prehour = '24',2016,2,20,'00'
-    wavedict = readWAVE_inbox(hours,year,month,day,prehour)
-    print wavedict
+    from datetime import date,timedelta
+    yestoday = datetime.today() - timedelta(days=1)
+    year,month,day = yestoday.year,yestoday.month,yestoday.day
+    hours = '3'
+    prehour = '00'
+    output = readWAVE_inbox(hours,year,month,day,prehour)
+    print output

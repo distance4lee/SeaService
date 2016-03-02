@@ -26,9 +26,11 @@ def readVIS_inbox(hours,year,month,day,prehour):
     lats,lons = grb_v.latlons()
     v,lats,lons = [i.ravel() for i in [v,lats,lons]]
     v = griddata(np.vstack((lons,lats)).T, v, (LONS,LATS), method='linear') # (LATS,LONS)
+    v = [int(i) for i in v] # keep int
     return v
 
 
 if __name__ == '__main__':
-    hours,year,month,day,prehour = '24',2016,2,20,'00'
+    hours,year,month,day,prehour = '24',2016,2,22,'00'
     v = readVIS_inbox(hours,year,month,day,prehour)
+    print v

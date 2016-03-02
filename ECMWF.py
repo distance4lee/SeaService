@@ -76,7 +76,8 @@ if __name__ == '__main__':
     hours,year,month,day,prehour = '24',2016,2,18,'00'
     output = readECMWF_inbox(hours,year,month,day,prehour)
     # write 'lats_lons.pkl' and 'points.txt'
-    lats_lons = {'lats':output['lats'], 'lons':output['lons']}
+    lons,lats = [output.get(i) for i in ['lons','lats']]
+    lats_lons = {'lats':lats, 'lons':lons}
     pkl = open('lats_lons.pkl','wb')
     pickle.dump(lats_lons, pkl)
     pkl.close()

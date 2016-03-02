@@ -1,13 +1,13 @@
 # coding:utf8
 
 '''
-	Work on 192.168.2.127
+    Work on 192.168.2.127
 
-	cmacast on 192.168.2.125 mounted on 127, i.e.
-		//192.168.2.125/cmacast on /mnt/cmacast
+    cmacast on 192.168.2.125 mounted on 127, i.e.
+        //192.168.2.125/cmacast on /mnt/cmacast
 
-	ECMWF data on path:
-		/mnt/cmacast/NWP_MCTR_002/ECMF_DAM/PUB/
+    ECMWF data on path:
+        /mnt/cmacast/NWP_MCTR_002/ECMF_DAM/PUB/
 '''
 
 import os
@@ -28,7 +28,7 @@ ECMWF_DIR = 'NWP_MCTR_002/ECMF_DAM/PUB/'
 ECMWF_FULLPATH = os.path.join(CMACAST_DIR,ECMWF_DIR)
 
 ELE_SFC_nameECMF = {
-	# temperature
+    # temperature
     '2T':'2 metre temperature',
     '2D':'2 metre dewpoint temperature',
     'SKT':'Skin temperature',

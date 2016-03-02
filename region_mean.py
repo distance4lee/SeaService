@@ -36,7 +36,8 @@ def region_mean(var,points_in_region_TrueFalse):
         var in a list with the same length of points
     '''
     var = [var[i] for i,a in enumerate(points_in_region_TrueFalse) if a]
-    var_mean = round(np.mean(var), 1) # keep 1 decimal
+    var_mean = round(np.nanmean(var), 1) # keep 1 decimal
+    # mind nan maybe in var_mean
     return var_mean
 
 
@@ -52,7 +53,7 @@ def region_means(var,points_in_region_TrueFalseS):
 
 if __name__ == '__main__':
     from ECMWF import *
-    hours,year,month,day,prehour = '24',2016,2,20,'00'
+    hours,year,month,day,prehour = '24',2016,2,22,'00'
     output = readECMWF_inbox(hours,year,month,day,prehour)
     #'''
     lats,lons,var = [output.get(i) for i in ['lats','lons','temperature']]
