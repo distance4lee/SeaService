@@ -2,7 +2,21 @@
 
 from config import *
 
-# fn = 'W_NAFP_C_ECMF_20160117175539_P_C1D01171200011712011.bin'
+# fn = 'W_NAFP_C_ECMF_20160117175539_P_C1D01171200011712011.bz2'
+
+
+def wait_for_readable(f, max_wait_time=120):
+    def isReadable(f):
+        return int(oct(os.stat(f).st_mode)[-1]) >= 4
+    if not isReadable(f):
+        w = 0
+        while w < max_wait_time:
+            if isReadable(f):
+                break
+            else:
+                import time
+                time.sleep(1)
+                w += 1
 
 
 def readECMWF_inbox(hours,year,month,day,prehour):
@@ -16,12 +30,20 @@ def readECMWF_inbox(hours,year,month,day,prehour):
     '''
     thetime = datetime(year,month,day,int(prehour))
     thetime_pre = thetime + timedelta(hours=int(hours))
-    fn = 'W_NAFP_C_ECMF_*_P_C1D%s00%s001.bin' % (
+    fn = 'W_NAFP_C_ECMF_*_P_C1D{}00{}001'.format(
         thetime.strftime('%m%d%H'),
         thetime_pre.strftime('%m%d%H'),
     )
-    fn_fullpath = os.popen('ls %s' % os.path.join(ECMWF_FULLPATH, fn)).read() # ECMWF_FULLPATH
-    fn_fullpath = fn_fullpath.replace('\n','')
+    fn_fullpath = glob.glob(os.path.join(ECMWF_FULLPATH, fn))
+    fn_fullpath = fn_fullpath[0] if fn_fullpath else ''
+    if fn_fullpath:
+        wait_for_readable(fn_fullpath)
+    else:
+        f_bz2 = glob.glob(os.path.join(ECMWF_FULLPATH, fn + '.bz2'))
+        f_bz2 = f_bz2[0] if f_bz2 else ''
+        if f_bz2:
+            os.system('bunzip2 -k {}'.format(f_bz2))
+            fn_fullpath = f_bz2[:-4]
     grbs = pygrib.open(fn_fullpath)
     # precipitation
     grb_r = grbs.select(nameECMF='Total precipitation')[0]
@@ -73,20 +95,20 @@ def readECMWF_inbox(hours,year,month,day,prehour):
 
 
 if __name__ == '__main__':
-    hours,year,month,day,prehour = '24',2016,2,18,'00'
-    output = readECMWF_inbox(hours,year,month,day,prehour)
+    hours, year, month, day, prehour = '24', 2016, 8, 31, '12'
+    output = readECMWF_inbox(hours, year, month, day, prehour)
     # write 'lats_lons.pkl' and 'points.txt'
-    lons,lats = [output.get(i) for i in ['lons','lats']]
+    lons, lats = [output.get(i) for i in ['lons', 'lats']]
     lats_lons = {'lats':lats, 'lons':lons}
-    pkl = open('lats_lons.pkl','wb')
+    pkl = open('lats_lons.pkl', 'wb')
     pickle.dump(lats_lons, pkl)
     pkl.close()
-    points = np.vstack([lons,lats]).T
-    np.savetxt('points.txt',points,fmt='%1.3f')
+    points = np.vstack([lons, lats]).T
+    np.savetxt('points.txt', points, fmt='%1.3f')
     '''
     import pickle
-    lats_lons = pickle.load(open('lats_lons.pkl','rb'))
-    lats,lons = [lats_lons.get(i) for i in ('lats','lons')]
+    lats_lons = pickle.load(open('lats_lons.pkl', 'rb'))
+    lats, lons = [lats_lons.get(i) for i in ('lats', 'lons')]
 
     grid_x,grid_y = np.mgrid[Nlon:Xlon+grid_delta:grid_delta,Nlat:Xlat+grid_delta:grid_delta] # grid_delta
     points2 = np.vstack([grid_x.T.ravel(),grid_y.T.ravel()[::-1]]).T
